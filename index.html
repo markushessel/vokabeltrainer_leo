@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#2357d8">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Vokabeln">
+  <meta name="format-detection" content="telephone=no">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="styles.css">
+  <title>Vokabeltrainer</title>
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">ENGLISCH LERNEN</div>
+        <h1>Vokabeltrainer</h1>
+      </div>
+      <div id="offlineBadge" class="status-badge" aria-live="polite">Prüfe Offline-Modus …</div>
+    </header>
+
+    <main id="main" class="main" tabindex="-1">
+      <section id="view-learn" class="view active" aria-labelledby="tab-learn"></section>
+      <section id="view-words" class="view" aria-labelledby="tab-words"></section>
+      <section id="view-import" class="view" aria-labelledby="tab-import"></section>
+      <section id="view-settings" class="view" aria-labelledby="tab-settings"></section>
+    </main>
+
+    <nav class="tabbar" aria-label="Hauptnavigation">
+      <button id="tab-learn" class="tab active" data-view="learn" aria-selected="true"><span>🗂️</span><small>Lernen</small></button>
+      <button id="tab-words" class="tab" data-view="words" aria-selected="false"><span>📚</span><small>Vokabeln</small></button>
+      <button id="tab-import" class="tab" data-view="import" aria-selected="false"><span>➕</span><small>Import</small></button>
+      <button id="tab-settings" class="tab" data-view="settings" aria-selected="false"><span>⚙️</span><small>Einstellungen</small></button>
+    </nav>
+  </div>
+
+  <dialog id="editDialog" class="dialog"></dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="seed-data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
