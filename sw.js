@@ -1,18 +1,24 @@
-const CACHE_NAME = 'vokabeltrainer-v1-2026-10-07';
+const CACHE_NAME = 'vokabeltrainer-v2-2026-10-07';
+const BASE = new URL('./', self.location.href);
+const INDEX_URL = new URL('index.html', BASE).href;
 const APP_SHELL = [
-  './',
-  './index.html',
-  './styles.css',
-  './app.js',
-  './seed-data.js',
-  './manifest.webmanifest',
-  './icons/icon-192.png',
-  './icons/icon-512.png',
-  './icons/apple-touch-icon.png'
+  BASE.href,
+  INDEX_URL,
+  new URL('styles.css', BASE).href,
+  new URL('app.js', BASE).href,
+  new URL('seed-data.js', BASE).href,
+  new URL('manifest.webmanifest', BASE).href,
+  new URL('icons/icon-192.png', BASE).href,
+  new URL('icons/icon-512.png', BASE).href,
+  new URL('icons/apple-touch-icon.png', BASE).href
 ];
 
 self.addEventListener('install', event => {
-  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL)).then(() => self.skipWaiting()));
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE_NAME);
+    await cache.addAll(APP_SHELL);
+    await self.skipWaiting();
+  })());
 });
 
 self.addEventListener('activate', event => {
@@ -30,33 +36,30 @@ self.addEventListener('fetch', event => {
 
   if (req.mode === 'navigate') {
     event.respondWith((async () => {
+      const cache = await caches.open(CACHE_NAME);
       try {
         const fresh = await fetch(req);
-        const cache = await caches.open(CACHE_NAME);
-        cache.put('./index.html', fresh.clone()).catch(() => {});
+        if (fresh && fresh.ok) await cache.put(INDEX_URL, fresh.clone());
         return fresh;
-      } catch {
-        return (await caches.match(req)) || (await caches.match('./index.html'));
+      } catch (_) {
+        return (await cache.match(INDEX_URL)) || (await cache.match(BASE.href)) || Response.error();
       }
     })());
     return;
   }
 
-  // Cache app assets and optional OCR/PDF libraries at runtime.
   event.respondWith((async () => {
-    const cached = await caches.match(req);
+    const cached = await caches.match(req, {ignoreSearch:true});
     if (cached) return cached;
     try {
       const fresh = await fetch(req);
       if (fresh && (fresh.ok || fresh.type === 'opaque')) {
         const cache = await caches.open(CACHE_NAME);
-        cache.put(req, fresh.clone()).catch(() => {});
+        await cache.put(req, fresh.clone()).catch(() => {});
       }
       return fresh;
     } catch (err) {
-      if (url.origin === self.location.origin) {
-        return new Response('Offline', {status: 503, statusText: 'Offline'});
-      }
+      if (url.origin === self.location.origin) return new Response('Offline', {status:503});
       throw err;
     }
   })());
