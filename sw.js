@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vokabeltrainer-v2-2026-10-07';
+const CACHE_NAME = 'vokabeltrainer-v3-2026-10-09';
 const BASE = new URL('./', self.location.href);
 const INDEX_URL = new URL('index.html', BASE).href;
 const APP_SHELL = [
